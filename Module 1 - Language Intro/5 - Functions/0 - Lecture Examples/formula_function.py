@@ -1,4 +1,4 @@
-def compound_return(initial_investment, interest_rate, years):
+def compound_return(principal, rate, n):
     """
     Calculate the total return on an investment that compounds annually
     :param initial_investment: Initial principal investment
@@ -6,12 +6,12 @@ def compound_return(initial_investment, interest_rate, years):
     :param years: Number of years to hold the investment
     :return: Total value fo the investment at the end of the term
     """
-    final_value = initial_investment * (1 + (interest_rate / 100)) ** years
+    final_value = principal * (1 + (rate / 100)) ** n
 
     return final_value
 
 
-principal = 1000  # initial amount to be deposited
+principal = 10000  # initial amount to be deposited
 rate = 1  # interest rate applied to deposit (will be divided by 100)
 n = 10  # number of years to compound deposit
 

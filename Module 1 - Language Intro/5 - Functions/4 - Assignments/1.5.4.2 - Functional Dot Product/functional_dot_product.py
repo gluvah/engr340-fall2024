@@ -1,4 +1,7 @@
 import random
+from typing import final
+from weakref import finalize
+
 import numpy as np
 
 
@@ -19,10 +22,12 @@ def dot_product(a,b):
     """
 
     ### YOUR CODE HERE ###
-
+    dot_product = 0
+    for i in range(length):
+        dot_product = dot_product + (vector_a[i] * vector_b[i])
 
     ### CHANGE THIS RETURN VALUE. IT IS HERE SO THE CODE DOES NOT ERROR
-    return None
+    return dot_product
 
 """
 Step 1: Generate two "vectors" of equal length but full of random values
@@ -32,7 +37,7 @@ maximum_value = 100
 fixed_length = int(random.uniform(2, max_length))
 vector_a = generate_random_int_list(fixed_length, maximum_value)
 vector_b = generate_random_int_list(fixed_length, maximum_value)
-
+length=len(vector_a)
 """
 Step 2: Call your custom dot_product function
 """

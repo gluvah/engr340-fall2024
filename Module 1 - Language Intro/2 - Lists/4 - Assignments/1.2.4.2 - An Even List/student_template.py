@@ -22,7 +22,12 @@ YOUR CODE BEGINS BELOW HERE. FILL IN THE MISSING OPERATIONS / CODE
 
 
 # this is the final result. Modify this line, and the empty lines above, to solve the assignment
-middle_average = None
+listlength =len(even_list)
+c = (listlength//2)-1
+d = (listlength//2)
+middle_left = even_list[c]
+middle_right = even_list[d]
+middle_average = (middle_left+middle_right)/2
 
 # the average of middle elements is
 print("The average is: ", middle_average)

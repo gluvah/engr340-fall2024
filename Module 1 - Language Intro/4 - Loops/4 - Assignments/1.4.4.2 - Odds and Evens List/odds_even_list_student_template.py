@@ -1,4 +1,4 @@
-# bring in randomness cause we need it in our lives
+# bring in randomness because we need it in our lives
 import random
 
 
@@ -30,7 +30,12 @@ odds_list = []
 """
 Step 1: Write a FOR loop to iterate through the list nums
 """
-
+for i in nums:
+    if i % 2:
+        odds_list.append(i)
+        continue
+    else:
+        evens_list.append(i)
 
 """
 Step 2: Inside the FOR loop, examine the contents of nums. If the

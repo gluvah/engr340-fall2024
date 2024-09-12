@@ -2,8 +2,8 @@
 sentence = "This is a random string."
 
 # iterate through string and print characters
-for c in sentence:
-    print(c)
+for i in sentence:
+    print(i)
 
 # add some excitement to the sentence. Make a new sentence
 # where final character is '!'
