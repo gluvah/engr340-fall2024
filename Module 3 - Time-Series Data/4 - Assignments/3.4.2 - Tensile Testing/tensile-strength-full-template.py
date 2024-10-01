@@ -60,14 +60,15 @@ def calculate_stress(force, sample_diameter):
     :return: An array of stresses experienced by the sample in Kilo Pascals (KPa)
     """
 
-    # calculate the cross-section area (mm^2)
-    ### your code here ###
+    xarea = ((sample_diameter / 2) ** 2) * np.pi
+
+    # calculate stress (MPa) from load (kN) and cross-sectional area
+    stress_o = force / xarea
 
     # delete this line and replace it with your own
-    stress = None
+    stress = stress_o*1000
 
     return stress
-
 
 def calculate_max_strength_strain(strain, stress):
     """
@@ -80,10 +81,10 @@ def calculate_max_strength_strain(strain, stress):
     """
 
     # calculate the maximum stress experienced
-    ultimate_tensile_stress = -1
+    ultimate_tensile_stress = max(stress)
 
     # calculate the maximum strain experienced
-    fracture_strain = -1
+    fracture_strain = max(strain)
 
     return ultimate_tensile_stress, fracture_strain
 
@@ -107,36 +108,39 @@ def calculate_elastic_modulus(strain, stress):
 
     # Step 3a: find the point that is 40% of peak stress
     # use from 0 to that value to create a linear plot
+    ultimate_tensile_strength = max(stress)
 
     ### your code below ###
-    secant_strain = -1
+    secant_strain = ultimate_tensile_strength * (.4)
+
 
     # Step 3b: find the intersection between 40% line and the curvey
     # take the abs() difference between the stress vector and secant_straint point
 
     ### your code below ###
-    diffs = -1
+    diffs = abs(stress - secant_strain)
 
     # use np.argmin() to find the minimum of the diffs array.
     # this will be the INDEX of the point in stress-strain that is closest to
     # secant_strain intersection
 
     # uncomment the line below and replace with your own
-    # linear_index = ....
+    linear_index = np.argmin(diffs)
 
     # Step 3c: down select to linear region for stress and strain
     # using list slicing. Uncomment lines below
-    # linear_stress = stress[# list slice#]
-    # linear_strain = strain[#list slice#]
+    linear_stress = stress[:linear_index]
+    linear_strain = strain[:linear_index]
 
     # Step 3d: find least squares fit to a line in the linear region
     # use 1-degree polynominal fit (line) from np.polyfit
     # save the slope and intercept so we can plot the line later
 
     # uncomment the line below and call np.polyfit
-    # slope, intercept = ....
+    slope, intercept = np.polyfit(linear_strain, linear_stress, 1)
 
     return linear_index, slope, intercept
+
 
 def calculate_percent_offset(slope, strain, stress):
     """
@@ -153,14 +157,14 @@ def calculate_percent_offset(slope, strain, stress):
     offset = 0.002
 
     # calculate the offset line: y=m(x-0.002) + 0
-    offset_line = None
+    offset_line = slope * (strain - 0.002)
 
     # measure distance from all points on graph to this line. Consider using the
     # abs() method to ensure values are positive
-    distance = None
+    distance = abs(offset_line - stress)
 
     # use argmin to find the index where the distance is minimal
-    intercept_index = -1
+    intercept_index = np.argmin(distance)
 
     return offset_line, intercept_index
 
@@ -186,6 +190,12 @@ if __name__ == "__main__":
     # sample diameter (mm), time (s), displacement (mm), force (kN), and strain (%)
     sample_diameter, time, displacement, force, strain = parse_tensile_file(path_to_file)
 
+    # plt.scatter(strain,force,label="Force - Strain")
+    # plt.xlabel("Strain (%)")
+    # plt.ylabel("Force (kN)")
+    # plt.title("Force Applied and Resulting Strain")
+    # plt.show()
+
     # Step #1: Given the forces and sample diameter, calculate the strain
     stress = calculate_stress(force, sample_diameter)
 
@@ -195,7 +205,7 @@ if __name__ == "__main__":
 
     # use scatter plot so we don't assume a line (yet)
     plt.scatter(strain, stress, label="Stress - Strain")
-    plt.xlabel('Strain (mm/mm)')
+    plt.xlabel('Strain (%)')
     plt.ylabel('Stress (MPa)')
     plt.title('Stress-Strain Curve for Sample ' + sample_name)
     plt.show()
@@ -227,7 +237,7 @@ if __name__ == "__main__":
 
     # show the original curve indicating the secant modulus at 40%
     plt.scatter(strain, stress, label="Stress - Strain")
-    plt.xlabel('Strain (mm/mm)')
+    plt.xlabel('Strain (%)')
     plt.ylabel('Stress (MPa)')
     plt.title('Stress-Strain Curve for Sample ' + sample_name)
 
@@ -241,16 +251,9 @@ if __name__ == "__main__":
     linear_stress = stress[0:linear_index]
 
     plt.scatter(linear_strain, linear_stress, label="Stress - Strain")
-    plt.xlabel('Strain (mm/mm)')
+    plt.xlabel('Strain (%)')
     plt.ylabel('Stress (MPa)')
     plt.title('Linear Region for Sample ' + sample_name + ' with best fit')
-
-    # compute line y=mx+b
-    best_fit_line = slope * linear_strain + intercept
-    plt.plot(linear_strain, best_fit_line, label="Best Linear Fit")
-
-    plt.legend()
-    plt.show()
 
     ### Step 4: calculate 0.2% yield strength ###
     offset_line, intercept_index = calculate_percent_offset(slope, strain, stress)
@@ -281,5 +284,4 @@ if __name__ == "__main__":
     plt.show()
 
     print("Done!")
-
-
+    print(ultimate_tensile_strength)
