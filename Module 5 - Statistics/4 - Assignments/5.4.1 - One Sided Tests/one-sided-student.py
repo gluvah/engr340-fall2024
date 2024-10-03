@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.stats import ttest_1samp, norm, ttest_ind
+from scipy.stats import ttest_1samp, norm, ttest_ind, alpha
 
 
 def write_to_csv(filename: str, data):
@@ -23,20 +23,33 @@ def write_to_csv(filename: str, data):
 
 def one_sided_tests(_files: list, _mean: float, _alpha: float, _less_than: bool):
     """
-    Conduct a one-sided t-test, either left or ride sided. Null hypothesis is the means are equal.
+    Conduct a one-sided t-test, either left or right sided. Null hypothesis is the means are equal.
     :param _files: List of files to be tested. Assume they can be loaded directly as a numpy array
     :param _mean: The test statistic mean for the hypothesis
     :param _alpha: Desired alpha value for t-test
     :param _less_than: If true, then a left-sided (<) t-test is performed. Otherwise, a right-sided test (>)
     :return: A list of files where the null hypothesis is rejected
     """
+    from scipy.stats import ttest_1samp
 
-    # list of files that are out of spec
+    # List of files where the null hypothesis is rejected
     reject_null_hypothesis = []
 
-    # YOUR CODE HERE #
+    # Determine the alternative hypothesis
+    alternative = 'less' if _less_than else 'greater'
 
-    # return samples that were rejected
+    for file in _files:
+        # Load data from the file
+        data = np.loadtxt(file)
+
+        # Perform a one-sided t-test using the 'alternative' parameter
+        t_statistic, p_value_one_sided = ttest_1samp(data, _mean, alternative = alternative)
+
+        # Compare p-value to alpha level
+        if p_value_one_sided < _alpha:
+            reject_null_hypothesis.append(file)
+
+    # Return samples where the null hypothesis is rejected
     return reject_null_hypothesis
 
 
@@ -80,4 +93,3 @@ if __name__ == "__main__":
     # perform all left-sided tests (rejected should be greater than target as means not equal)
     right_sided_tests = one_sided_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.5, _less_than=False)
     print('Conducting right sided tests. All samples greater that mean should be returned. Samples: ', right_sided_tests)
-
