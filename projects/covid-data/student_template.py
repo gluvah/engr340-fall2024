@@ -1,4 +1,6 @@
 import sys
+import numpy as np
+import pandas as pd
 
 
 def parse_nyt_data(file_path=''):
@@ -65,9 +67,12 @@ def first_question(data):
     # When was the first positive COVID case in Harrisonburg?
     :return:
     """
+    df = pd.read_csv('us-countries.csv')
 
-    # your code here
-    return
+
+
+
+    return Date
 
 def second_question(data):
     """
