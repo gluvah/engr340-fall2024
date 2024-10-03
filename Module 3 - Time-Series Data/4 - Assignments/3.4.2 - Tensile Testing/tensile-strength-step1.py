@@ -1,3 +1,4 @@
+import numpy
 import numpy as np
 import os
 import math
@@ -59,17 +60,18 @@ def calculate_stress(force, sample_diameter):
     :param sample_diameter: The diameter of the sample in millimeters (mm)
     :return: An array of stresses experienced by the sample in Kilo Pascals (MPa)
     """
-
-    # calculate the cross-section area (mm^2)
-    ### your code here ###
+    xarea = ((sample_diameter / 2) ** 2) * np.pi
 
     # calculate stress (MPa) from load (kN) and cross-sectional area
-    ### your code here ###
+    stress_o = force / xarea
 
     # delete this line and replace it with your own
-    stress = None
+    stress = stress_o
 
     return stress
+
+
+
 
 
 
