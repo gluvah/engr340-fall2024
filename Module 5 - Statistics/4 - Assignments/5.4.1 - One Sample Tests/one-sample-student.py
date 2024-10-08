@@ -1,5 +1,6 @@
 import numpy as np
-from scipy.stats import ttest_1samp
+from scipy.stats import ttest_1samp, norm, ttest_ind
+
 
 def write_to_csv(filename: str, data):
     """
@@ -19,9 +20,10 @@ def write_to_csv(filename: str, data):
 
     file.close()
 
+
 def one_sample_tests(_files: list, _mean: float, _alpha: float, _less_than: bool):
     """
-    Conduct a one-sided t-test, either left or right sided. Null hypothesis is the means are equal.
+    Conduct a one-sided t-test, either left or ride sided. Null hypothesis is the means are equal.
     :param _files: List of file names to be tested. Assume they can be loaded directly as a numpy array
     :param _mean: The test statistic mean for the hypothesis
     :param _alpha: Desired alpha value for t-test
@@ -32,26 +34,11 @@ def one_sample_tests(_files: list, _mean: float, _alpha: float, _less_than: bool
     # list of files that are out of spec
     reject_null_hypothesis = []
 
-    for file in _files:
-        try:
-            data = np.loadtxt(file)
-        except FileNotFoundError:
-            print(f"Could not load file {file}, gonna skip")
-            continue
-
-        # Perform the t-test
-        t_stat, p_value = ttest_1samp(data, _mean)
-
-        # Check rejection condition based on direction and alpha value
-        if _less_than:
-            if t_stat < 0 and p_value < _alpha:
-                reject_null_hypothesis.append(file)
-        else:
-            if t_stat > 0 and p_value < _alpha:
-                reject_null_hypothesis.append(file)
+    # YOUR CODE HERE #
 
     # return samples that were rejected
     return reject_null_hypothesis
+
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plot
@@ -77,7 +64,7 @@ if __name__ == "__main__":
 
     # write samples to files
     write_to_csv('base1.txt', base_distribution_one)
-    write_to_csv('base2.txt', base_distribution_two)
+    write_to_csv('base2.txt', base_distribution_one)
     write_to_csv('lesser1.txt', less_than_distribution_one)
     write_to_csv('lesser2.txt', less_than_distribution_two)
     write_to_csv('greater1.txt', greater_than_distribution_one)
@@ -87,9 +74,10 @@ if __name__ == "__main__":
     one_sided_test_files = ['lesser1.txt', 'lesser2.txt', 'greater1.txt', 'greater2.txt']
 
     # perform all left-sided tests (rejected should be less than target as means not equal)
-    left_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.05, _less_than=True)
-    print('Conducting left sided tests. All samples less than mean should be returned. Samples: ', left_sided_tests)
+    left_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.5, _less_than=True)
+    print('Conducting left sided tests. All samples less that mean should be returned. Samples: ', left_sided_tests)
 
-    # perform all right-sided tests (rejected should be greater than target as means not equal)
-    right_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.05, _less_than=False)
-    print('Conducting right sided tests. All samples greater than mean should be returned. Samples: ', right_sided_tests)
+    # perform all left-sided tests (rejected should be greater than target as means not equal)
+    right_sided_tests = one_sample_tests(_files=one_sided_test_files, _mean=target_mu, _alpha=0.5, _less_than=False)
+    print('Conducting right sided tests. All samples greater that mean should be returned. Samples: ', right_sided_tests)
+
