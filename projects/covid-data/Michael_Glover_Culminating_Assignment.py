@@ -143,6 +143,67 @@ def third_question(data):
     # What was the worst 7-day period in either the city and county for new COVID cases?
     # This is the 7-day period where the number of new cases was maximal.
 
+    #Put in empty lists to store the data for each county
+    harrisonburg_data = []
+    rockingham_data = []
+
+    #Filter the data for each of the two counties
+    for entry in data:
+        date, county, state, cases, deaths = entry
+        if county == 'Harrisonburg city' and state == 'Virginia':
+            harrisonburg_data.append(entry)
+        if county == 'Rockingham' and state == 'Virginia':
+            rockingham_data.append(entry)
+
+    #First, I calculate new daily cases for Harrisonburg
+    #Put in empty lists to store the new daily data for Harrisonburg
+    harrisonburg_new_daily_cases = []
+    for i in range(1,len(harrisonburg_data)):
+        previous_cases_h = harrisonburg_data[i-1][3]
+        current_cases_h = harrisonburg_data[i][3]
+        new_cases_h = current_cases_h - previous_cases_h
+        harrisonburg_new_daily_cases.append((harrisonburg_data[i][0],new_cases_h))
+
+    #Next, I calculate new daily cases for Rockingham
+    #Put in empty lists to store the new daily data for Rockingham
+    rockingham_new_daily_cases =[]
+    for i in range(1,len(rockingham_data)):
+        previous_cases_r = rockingham_data[i-1][3]
+        current_cases_r = rockingham_data[i][3]
+        new_cases_r = current_cases_r - previous_cases_r
+        rockingham_new_daily_cases.append((rockingham_data[i][0],new_cases_r))
+
+    #Finally, I can find the worst 7 day period. First, I will start with Harrisonburg.
+    max_7_day_sum_h = 0
+    max_7_day_period_h = None
+    for i in range(len(harrisonburg_new_daily_cases)-6):
+        running_7_day_sum = sum([harrisonburg_new_daily_cases[k][1] for k in range(i,i+7)])
+        if running_7_day_sum > max_7_day_sum_h:
+            max_7_day_sum_h = running_7_day_sum
+            max_7_day_period_h = (harrisonburg_new_daily_cases[i][0], harrisonburg_new_daily_cases[i+6][0])
+
+    #Moving on to Rockingham:
+    max_7_day_sum_r = 0
+    max_7_day_period_r = None
+    for i in range(len(rockingham_new_daily_cases) - 6):
+        running_7_day_sum = sum([rockingham_new_daily_cases[k][1] for k in range(i, i + 7)])
+        if running_7_day_sum > max_7_day_sum_r:
+            max_7_day_sum_r = running_7_day_sum
+            max_7_day_period_r = (rockingham_new_daily_cases[i][0], rockingham_new_daily_cases[i + 6][0])
+
+    #Display the answer!
+    print('\n')
+    print('The answers to the second question are:')
+    print('The worst 7-day period for new COVID cases in Harrisonburg was from',
+          max_7_day_period_h[0], 'to', max_7_day_period_h[1],
+          'with a total of', max_7_day_sum_h, 'new cases.')
+    print('The worst 7-day period for new COVID cases in Rockingham County was from',
+          max_7_day_period_r[0], 'to', max_7_day_period_r[1],
+          'with a total of', max_7_day_sum_r, 'new cases.')
+
+
+
+
     return
 
 if __name__ == "__main__":
