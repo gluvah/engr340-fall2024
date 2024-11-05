@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from fontTools.misc.cython import returns
 from scipy.signal import find_peaks
 
 """
@@ -32,15 +33,15 @@ Adjust the values for threshold and timeout to change the detection method/appro
 """
 
 # set a detection threshold (YOUR VALUE BELOW)
-detection_threshold = -1
+detection_threshold = 0.75
 
 # set a heart beat time out (YOUR VALUE BELOW)
-detection_time_out = -1
+detection_time_out = 180
 
 # track the last time we found a beat
 last_detected_index = -1
 
-# keep not of where we are in the data
+# keep note of where we are in the data
 current_index = 0
 
 # store indices of all found beats
@@ -49,13 +50,14 @@ beats_detected = list()
 """
 Step 4: Manually iterate through the signal and apply the threshold with timeout
 """
-
 # loop through signal finding beats
-for value in signal:
-    ## Use a conditional statement to see if the signal is above a threshold...
-
-    ## Once an index is found, place the index in the beats_detected list
-    current_index += 1
+for current_index in range(len(signal)):
+## Use a conditional statement to see if the signal is above a threshold...
+    if signal[current_index] > detection_threshold and (current_index - last_detected_index) > detection_time_out:
+## Once an index is found, place the index in the beats_detected list
+        beats_detected.append(current_index)
+        last_detected_index = current_index
+        current_index += 1
 
 print("Within the sample we found ", len(beats_detected), " heart beats with manual search!")
 

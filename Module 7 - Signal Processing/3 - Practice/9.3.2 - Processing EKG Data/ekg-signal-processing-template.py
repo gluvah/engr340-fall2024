@@ -51,14 +51,14 @@ moving_second = np.convolve(squared_second, np.ones(window_size) / window_size, 
 
 # make a plot of the results. Can change the plot() parameter below to show different intermediate signals
 plt.title('Signal Processing')
-#plt.plot(first_lead, label='Original Signal for Lead 1')
+plt.plot(first_lead, label='Original Signal for Lead 1')
 #plt.plot(second_lead, label='Original Signal for Lead 2')
 #plt.plot(weighted_data_first, label='Lead 1: Weighted')
 #plt.plot(weighted_data_second, label='Lead 2: Weighted')
 #plt.plot(squared_first, label='Lead 1: Squared')
 #plt.plot(squared_second, label='Lead 2: Squared')
-plt.plot(moving_first, label='Lead 1: Moving')
-plt.plot(moving_second, label='Lead 2: Moving')
+#plt.plot(moving_first, label='Lead 1: Moving')
+#plt.plot(moving_second, label='Lead 2: Moving')
 plt.xlabel('Sample #')
 plt.ylabel('Voltage (mV)')
 plt.legend()
