@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 Preamble: Load data from source CSV file
 """
 
-file_path = '/Users/michaelglover/Documents/GitHub/repoengr340/data/drop-jump/all_participant_data_rsi.csv'
+file_path = '../../data/drop-jump/all_participant_data_rsi.csv'
 data = pd.read_csv(file_path)
 
 """
@@ -47,19 +47,35 @@ a fit or not. Do this for both acceleration and force plate distributions. It is
 [0,2), add append -inf and +inf to both ends of the bins. An alpha=0.05 is suitable for these tests.
 """
 print('\n\n-----Question 2-----')
-bins = np.linspace(0, 2, 10)
+bins = np.linspace(0, 2, 9)
 bins = np.concatenate(([-np.inf], bins, [np.inf]))
 alpha = 0.05
 """
 Acceleration
 """
-### YOUR CODE HERE
-
-
+expected_acc_prob = np.diff(norm.cdf(bins, mu_acc, std_acc))
+expected_acc_counts = expected_acc_prob * len(accelerometer)
+observed_acc_counts, _ = np.histogram(accelerometer,bins,density=False)
+(chi_stat_acc,p_value_acc) = chisquare(observed_acc_counts,expected_acc_counts,2)
+print('Acceleration P-Value:',p_value_acc)
+print('Acceleration Chi2 Stat:',chi_stat_acc)
+if p_value_acc < alpha:
+    print('Reject Null Hypothesis;Acceleration data does not fit well into the normal distribution')
+else:
+    print('Accept Null Hypothesis;Acceleration data fits well into the normal distribution')
 """
 Force Plate
 """
-### YOUR CODE HERE
+expected_fp_prob = np.diff(norm.cdf(bins,mu_fp,std_fp))
+expected_fp_counts = expected_fp_prob * len(force_plate)
+observed_fp_counts, _ = np.histogram(force_plate,bins,density=False)
+(chi_stat_fp,p_value_fp) = chisquare(observed_fp_counts,expected_fp_counts,2)
+print('\nForce Plate P-Value:',p_value_fp)
+print('Force Plate Chi2 Stat:',chi_stat_fp)
+if p_value_fp < alpha:
+    print('Reject Null Hypothesis;Force Plate data does not fit well into the normal distribution')
+else:
+    print('Accept Null Hypothesis;Force Plate data fits well into the normal distribution')
 
 """
 Question 3: Perform a t-test to determine whether the RSI means for the acceleration and force plate data are equivalent 
@@ -68,8 +84,12 @@ An alpha=0.05 is suitable for these tests.
 """
 print('\n\n-----Question 3-----')
 
-### YOUR CODE HERE
-
+t_stat, p_value_ttest = ttest_ind(force_plate,accelerometer)
+print(f"t-test p-value: {p_value_ttest:.3f}")
+if p_value_ttest < alpha:
+    print('Reject Null Hypothesis: The RSI means of acceleration and force plate data are not equivalent')
+else:
+    print('Accept Null Hypothesis: The RSI means of acceleration and force plate data are equivalent')
 """
 Question 4: Calculate the RSI Error for the dataset where error is expressed as the difference between the 
 Force Plate RSI measurement and the Accelerometer RSI measurement. Fit this error distribution to a normal curve and 
@@ -77,4 +97,21 @@ plot a histogram of the data on the same plot showing the fitted normal curve. I
 legends. The default binning approach from matplot lib with 16 bins is sufficient.
 """
 
-### YOUR CODE HERE
+rsi_error = force_plate - accelerometer
+#Find the Mean and Std of the error
+mu_error = np.mean(rsi_error)
+std_error = np.std(rsi_error)
+#Fit the error data to a normal distribution
+x_error = np.linspace(mu_error - 4 * std_error, mu_error + 4 * std_error, 1000)
+#This will ensure +- 4 std dev. from the mean
+y_error = norm.pdf(x_error, mu_error, std_error)
+#Now, we graph!
+plt.figure(figsize=(10, 6))
+plt.hist(rsi_error, density=True, alpha=0.6, color='g', label='Error Histogram')
+plt.plot(x_error, y_error, color='red', linewidth=2, label='Fitted Normal Distribution')
+plt.xlabel('RSI Error Value')
+plt.ylabel('Probability Density')
+plt.title('RSI Error Distribution and Fitted Normal Curve')
+plt.legend()
+plt.grid(True)
+plt.show()
